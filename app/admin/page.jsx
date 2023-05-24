@@ -1,25 +1,29 @@
 "use client";
-import { useSession, signIn, signOut } from "next-auth/react";
+import AdminLayout from "@components/AdminLayout";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const AdminPage = () => {
   const { data: session } = useSession();
 
-  if (!session) {
-    return (
-      <main className="bg_blue_gradient w-screen h-screen flex items-center">
-        <div className="w-full text-center">
-          <button
-            className="bg-white p-2 rounded-lg px-4"
-            onClick={() => signIn("google")}
-          >
-            Login with Google
-          </button>
-        </div>
-      </main>
-    );
-  }
+  console.log(session?.user?.image);
 
-  return <div>Logged in as {session.user.email}</div>;
+  return (
+    <AdminLayout>
+      <div className="text-blue-900 flex justify-between ">
+        <h2 className="font-semibold text-2xl">Hello, {session?.user.name}!</h2>
+        <div className="">
+          <Image
+            src={session?.user?.image}
+            alt={session?.user?.name}
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        </div>
+      </div>
+    </AdminLayout>
+  );
 };
 
 export default AdminPage;

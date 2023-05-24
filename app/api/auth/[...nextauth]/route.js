@@ -1,5 +1,7 @@
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
+import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+import clientPromise from "@lib/mongodb";
 // import { connectToDB } from "@utils/database";
 // import User from "@models/user";
 
@@ -15,6 +17,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_SECRET,
     }),
   ],
+  adapter: MongoDBAdapter(clientPromise),
 
   //   callbacks: {
   // async session({ session }) {
