@@ -6,8 +6,6 @@ import Image from "next/image";
 const AdminPage = () => {
   const { data: session } = useSession();
 
-  console.log(session?.user?.image);
-
   return (
     <AdminLayout>
       <div className="text-blue-900 flex justify-between ">
