@@ -1,89 +1,138 @@
 "use client";
 import AdminLayout from "@components/AdminLayout";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [singleProduct, setSingleProduct] = useState("");
+const Categories = () => {
+  const [name, setName] = useState("");
+  const [editedCategory, setEditedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [parentCategory, setParentCategory] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [singleCategory, setSingleCategory] = useState("");
 
-  const fetchProducts = async () => {
-    const response = await fetch("/api/products");
+  const fetchCategories = async () => {
+    const response = await fetch("/api/categories");
     const data = await response.json();
 
-    setProducts(data);
+    setCategories(data);
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const handleDelete = async (id) => {
+    fetchCategories();
+  }, [name]);
+  const saveCategory = async (e) => {
+    e.preventDefault();
     try {
-      await fetch(`/api/products/${id.toString()}`, {
-        method: "DELETE",
+      const res = await fetch("/api/categories/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          parentCategory,
+        }),
       });
 
-      const filteredProducts = products.filter((item) => item._id !== id);
-
-      setProducts(filteredProducts);
+      if (res.ok) {
+        setName("");
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const editCategory = async (category) => {
+    setEditedCategory(category);
+    setName(category.name);
+    setParentCategory(category.parent?._id);
+  };
+
+  const handleDelete = async (id) => {
+    // try {
+    //   await fetch(`/api/categories/${id.toString()}`, {
+    //     method: "DELETE",
+    //   });
+    //   const filteredCategories = categories.filter((item) => item._id !== id);
+    //   setCategories(filteredCategories);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
   return (
     <AdminLayout>
-      <Link href="/admin/products/new" className=" ">
-        <button className="bg-green-700 text-white py-2 px-2 rounded-md hover:scale-105">
-          Add New Product
+      <h1>Categories</h1>
+      <label htmlFor="">
+        {editCategory ? "Edit" : "Create New"} Category Name
+      </label>
+      <form onSubmit={saveCategory} className="flex gap-1">
+        <input
+          className="mb-0"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          type="text"
+          placeholder=" Category Name"
+        />
+        <select
+          className="mb-0 w-[35%] "
+          onChange={(e) => setParentCategory(e.target.value)}
+          value={parentCategory ? parentCategory : ""}
+        >
+          <option value="">No Parent Category</option>
+
+          {categories?.map((category) => (
+            <option
+              key={category._id}
+              className="capitalize"
+              value={category._id}
+            >
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <button type="submit" className="btn_primary py-1">
+          Save
         </button>
-      </Link>
-      <table className="table">
+      </form>
+
+      <table className="table mt-4">
         <thead>
           <tr>
-            <th>Product Name</th>
-            <th>Price</th>
-            <th className="w-28">Actions</th>
+            <th>Category Name</th>
+            <th>Parent Category</th>
+            <th className="w-[12vw] ">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr key={product._id}>
-              <td>{product.title}</td>
-              <td>
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                }).format(product.price)}
-              </td>
+          {categories?.map((category) => (
+            <tr key={category._id}>
+              <td className="capitalize">{category.name}</td>
+              <td className="capitalize">{category?.parent?.name}</td>
 
               <td className="flex  justify-center gap-8">
-                <Link href={`/admin/products/update-product?id=${product._id}`}>
-                  <span className="">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6 text-blue-800 font-semibold cursor-pointer hover:scale-105 "
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                      />
-                    </svg>
-                  </span>
-                </Link>
+                <span className="" onClick={() => editCategory(category)}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 text-blue-800 font-semibold cursor-pointer hover:scale-105 "
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                    />
+                  </svg>
+                </span>
 
                 <span
                   className=""
                   onClick={() =>
                     setConfirmDelete(!confirmDelete) ||
-                    setSingleProduct(product)
+                    setSingleCategory(category)
                   }
                 >
                   <svg
@@ -130,7 +179,7 @@ const Products = () => {
                             Are you sure you want to delete:
                             <span className="whitespace-nowrap text-blue-800">
                               {" "}
-                              "{singleProduct.title}"
+                              "{singleCategory.name}"
                             </span>
                             ?
                           </h3>
@@ -146,7 +195,7 @@ const Products = () => {
                           <button
                             className="btn_primary !bg-red-500"
                             onClick={() =>
-                              handleDelete(singleProduct._id) ||
+                              handleDelete(singleCategory._id) ||
                               setConfirmDelete(!confirmDelete)
                             }
                           >
@@ -162,11 +211,8 @@ const Products = () => {
           ))}
         </tbody>
       </table>
-      <span className="flex w-full justify-end font-semibold">
-        {products.length} products
-      </span>
     </AdminLayout>
   );
 };
 
-export default Products;
+export default Categories;
