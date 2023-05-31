@@ -1,10 +1,14 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
 const ProductSchema = new Schema(
   {
     title: {
       type: String,
       required: [true, "Product Title is required!"],
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
     },
     images: [
       {
@@ -20,6 +24,7 @@ const ProductSchema = new Schema(
       type: String,
       required: [true, "Product Price is required!"],
     },
+    properties: { type: Object },
   },
   { timestamps: true }
 );

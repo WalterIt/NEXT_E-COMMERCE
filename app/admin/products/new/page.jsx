@@ -11,27 +11,10 @@ const CreateProduct = () => {
     title: "",
     description: "",
     price: "",
+    category: "",
   });
   const [images, setImages] = useState([]);
-  // const [newImages, setNewImages] = useState([]);
-
-  // console.log(images);
-
-  // useEffect(() => {
-  //   const uploadImages = async () => {
-  //     const files = images;
-  //     if (files?.length >= 0) {
-  //       const data = new FormData();
-  //       for (const file of files) {
-  //         data.append("file", file);
-  //       }
-  //       setNewImages(data);
-  //     }
-  //   };
-  //   uploadImages();
-  // }, [images]);
-
-  console.log(images);
+  const [properties, setProperties] = useState({});
 
   const createProduct = async (e) => {
     e.preventDefault();
@@ -46,7 +29,9 @@ const CreateProduct = () => {
           title: product.title,
           description: product.description,
           price: product.price,
+          category: product.category,
           images,
+          properties,
         }),
       });
 
@@ -70,6 +55,8 @@ const CreateProduct = () => {
         handleSubmit={createProduct}
         images={images}
         setImages={setImages}
+        properties={properties}
+        setProperties={setProperties}
       />
     </AdminLayout>
   );

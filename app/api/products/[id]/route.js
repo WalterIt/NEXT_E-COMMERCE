@@ -15,7 +15,8 @@ export const GET = async (request, { params }) => {
 };
 
 export const PATCH = async (request, { params }) => {
-  const { title, description, price, images } = await request.json();
+  const { title, category, description, price, images, properties } =
+    await request.json();
 
   try {
     await connectToDB();
@@ -29,9 +30,11 @@ export const PATCH = async (request, { params }) => {
 
     // Update the product with new data
     existingProduct.title = title;
+    existingProduct.category = category;
     existingProduct.description = description;
     existingProduct.price = price;
     existingProduct.images = images;
+    existingProduct.properties = properties;
 
     await existingProduct.save();
 

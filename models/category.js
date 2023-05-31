@@ -10,6 +10,11 @@ const CategorySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
     },
+    properties: [
+      {
+        type: Object,
+      },
+    ],
   },
   { timestamps: true }
 );

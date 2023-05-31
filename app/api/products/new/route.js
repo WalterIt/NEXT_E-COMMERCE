@@ -3,11 +3,19 @@ import Product from "@models/product";
 import { connectToDB } from "@utils/database";
 
 export const POST = async (request) => {
-  const { title, description, price, images } = await request.json();
+  const { title, category, description, price, images, properties } =
+    await request.json();
 
   try {
     await connectToDB();
-    const newProduct = new Product({ title, description, price, images });
+    const newProduct = new Product({
+      title,
+      category,
+      description,
+      price,
+      images,
+      properties,
+    });
 
     await newProduct.save();
     return new Response(JSON.stringify(newProduct), {

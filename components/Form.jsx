@@ -6,7 +6,7 @@ import {
 } from "firebase/storage";
 import app from "@firebase";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
 
@@ -18,8 +18,23 @@ const Form = ({
   handleSubmit,
   images,
   setImages,
+  properties,
+  setProperties,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  // const [category, setCategory] = useState("");
+
+  const fetchCategories = async () => {
+    const response = await fetch("/api/categories");
+    const data = await response.json();
+
+    setCategories(data);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const uploadPhoto = async (e) => {
     e.preventDefault();
@@ -46,8 +61,6 @@ const Form = ({
     setIsLoading(false);
   };
 
-  // console.log(images);
-
   function removePhoto(e, filename) {
     e.preventDefault();
     setImages([...images.filter((image) => image !== filename)]);
@@ -55,6 +68,23 @@ const Form = ({
 
   const updateImagesOrder = (images) => {
     setImages(images);
+  };
+
+  const propertiesToFill = [];
+  if (categories.length && product.category) {
+    let CategoryInfo = categories.find(({ _id }) => _id === product.category);
+    propertiesToFill.push(...CategoryInfo.properties);
+    while (CategoryInfo?.parent?._id) {
+      const parentCategory = categories.find(
+        ({ _id }) => _id === CategoryInfo?.parent?._id
+      );
+      propertiesToFill.push(...parentCategory.properties);
+      CategoryInfo = parentCategory;
+    }
+  }
+
+  const setProductProperties = (name, value) => {
+    setProperties({ ...properties, [name]: value });
   };
 
   return (
@@ -70,6 +100,57 @@ const Form = ({
           placeholder="Product Name"
           required
         />
+
+        <div className="flex w-full flex-col mb-4">
+          <label htmlFor="">Category</label>
+          <select
+            className="mb-2 w-[35%] "
+            value={product?.category}
+            onChange={(e) =>
+              setProduct({ ...product, category: e.target.value })
+            }
+            // value={parentCategory ? parentCategory : ""}
+          >
+            <option value="">Uncategorized</option>
+
+            {categories?.map((category) => (
+              <option
+                key={category._id}
+                className="capitalize"
+                value={category._id}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+          {propertiesToFill?.length
+            ? propertiesToFill.map((p, i) => (
+                <div key={i} className="capitalize flex gap-1">
+                  <span>{p.name}: </span>
+                  <select
+                    className=" w-[29%] "
+                    multiple
+                    value={properties[p.name]}
+                    onChange={(e) =>
+                      setProductProperties(
+                        p.name,
+                        Array.from(
+                          e.target.selectedOptions,
+                          (option) => option.value
+                        )
+                      )
+                    }
+                  >
+                    {p.values.map((value, i) => (
+                      <option value={value} key={i}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))
+            : null}
+        </div>
 
         <label htmlFor="">Pictures</label>
         <div className="mt-2 mb-4 gap-2 flex flex-wrap">
@@ -89,7 +170,6 @@ const Form = ({
                     alt={link}
                     className="rounded-2xl !w-full object-cover"
                   />
-                  {/* <Image className="rounded-2xl w-full object-cover" src={link} /> */}
                   <button
                     onClick={(e) => removePhoto(e, link)}
                     className="cursor-pointer absolute bottom-1 right-1 text-white bg-black bg-opacity-50 p-1 hover:bg-red-600 rounded-2xl"
@@ -144,33 +224,6 @@ const Form = ({
             Upload
           </label>
         </div>
-
-        {/* <div className="mb-2">
-          <label className="w-24 h-24  flex items-center flex-col justify-center font-semibold text-gray-500 rounded-lg bg-gray-100 cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M11.47 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 01-1.06 1.06l-3.22-3.22V16.5a.75.75 0 01-1.5 0V4.81L8.03 8.03a.75.75 0 01-1.06-1.06l4.5-4.5zM3 15.75a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Updload
-            <input
-              type="file"
-              className="hidden"
-              //   value={product.images}
-              onChange={(e) => setImages({ ...images, images: e.target.files })}
-            />
-          </label>
-          {!images?.length && (
-            <div className="">No Pictures for this Product Yet!</div>
-          )}
-        </div> */}
 
         <label htmlFor="">Product Description</label>
         <textarea

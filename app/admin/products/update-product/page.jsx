@@ -12,10 +12,12 @@ const UpdateProduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [product, setProduct] = useState({
     title: "",
+    category: "",
     description: "",
     price: "",
   });
   const [images, setImages] = useState([]);
+  const [properties, setProperties] = useState({});
 
   useEffect(() => {
     const getProductDetails = async () => {
@@ -24,11 +26,14 @@ const UpdateProduct = () => {
 
       setProduct({
         title: data.title,
+        category: data.category,
         description: data.description,
         price: data.price,
+        properties: data.properties,
       });
 
       setImages(data.images);
+      setProperties(data.properties);
     };
 
     if (productId) getProductDetails();
@@ -45,9 +50,11 @@ const UpdateProduct = () => {
         method: "PATCH",
         body: JSON.stringify({
           title: product.title,
+          category: product.category,
           description: product.description,
           price: product.price,
           images,
+          properties,
         }),
       });
 
@@ -69,6 +76,8 @@ const UpdateProduct = () => {
         images={images}
         setImages={setImages}
         setProduct={setProduct}
+        properties={properties}
+        setProperties={setProperties}
         isSubmitting={isSubmitting}
         handleSubmit={updateProduct}
       />
