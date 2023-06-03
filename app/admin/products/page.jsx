@@ -59,7 +59,7 @@ const Products = () => {
                 }).format(product.price)}
               </td>
 
-              <td className="flex  justify-center gap-8">
+              <td className="flex items-center  justify-center gap-[6%]">
                 <Link href={`/admin/products/update-product?id=${product._id}`}>
                   <span className="">
                     <svg
@@ -102,7 +102,7 @@ const Products = () => {
                   </svg>
 
                   {confirmDelete && (
-                    <div className="w-full h-screen z-[9999] fixed top-0 left-0 flex items-center justify-center bg-[#00000037]">
+                    <div className="w-full  h-screen z-[999] fixed top-0 left-0 flex items-center justify-center bg-[#00000037] opacity-30 ">
                       <div
                         className={`w-[55%] 800px:w-[50%] bg-white shadow rounded h-[30vh]   min-h-[30vh] p-3`}
                       >

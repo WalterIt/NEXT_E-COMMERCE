@@ -116,7 +116,7 @@ const Form = ({
             {categories?.map((category) => (
               <option
                 key={category._id}
-                className="capitalize"
+                className="capitalize "
                 value={category._id}
               >
                 {category.name}
@@ -125,10 +125,13 @@ const Form = ({
           </select>
           {propertiesToFill?.length
             ? propertiesToFill.map((p, i) => (
-                <div key={i} className="capitalize flex gap-1">
+                <div
+                  key={i}
+                  className="capitalize text-blue-900 font-semibold flex gap-1"
+                >
                   <span>{p.name}: </span>
                   <select
-                    className=" w-[29%] "
+                    className=" w-[29%] capitalize "
                     multiple
                     value={properties[p.name]}
                     onChange={(e) =>
@@ -157,7 +160,7 @@ const Form = ({
           {/* <div className="mt-2 mb-4 gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6"> */}
           <ReactSortable
             list={images}
-            className="gap-2 flex flex-wrap "
+            className="gap-2 flex flex-wrap  "
             setList={updateImagesOrder}
           >
             {images?.length > 0 &&
@@ -168,7 +171,7 @@ const Form = ({
                     width={32}
                     height={32}
                     alt={link}
-                    className="rounded-2xl !w-full object-cover"
+                    className="rounded-2xl shadow-md !w-full object-cover"
                   />
                   <button
                     onClick={(e) => removePhoto(e, link)}

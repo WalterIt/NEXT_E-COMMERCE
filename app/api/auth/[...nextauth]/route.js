@@ -2,15 +2,12 @@ import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "@lib/mongodb";
-// import { connectToDB } from "@utils/database";
-// import User from "@models/user";
 
-// console.log({
-//   clientId: process.env.GOOGLE_ID,
-//   clientSecret: process.env.GOOGLE_SECRET,
-// });
+const adminEmails = process.env.ADMIN_EMAILS;
 
-const handler = NextAuth({
+// TODO: Create a function to protect api routes
+
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
@@ -19,7 +16,14 @@ const handler = NextAuth({
   ],
   adapter: MongoDBAdapter(clientPromise),
 
-  //   callbacks: {
+  callbacks: {
+    session: async ({ session, token, user }) => {
+      if (adminEmails.includes(session?.user?.email)) {
+        return session;
+      }
+      return false;
+    },
+  },
   // async session({ session }) {
   //   const sessionUser = await User.findOne({
   //     email: session.user.email,
@@ -47,6 +51,10 @@ const handler = NextAuth({
   //       }
   //     },
   //   },
-});
+};
 
-export { handler as GET, handler as POST };
+export const authNextAuth = NextAuth(authOptions);
+
+export { authNextAuth as GET, authNextAuth as POST };
+
+// export { handler as GET, handler as POST };

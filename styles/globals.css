@@ -71,5 +71,5 @@ table.table tr th {
 }
 
 table.table tr td {
-  @apply border border-gray-300 p-2;
+  @apply border border-gray-300 p-2 px-4;
 }
