@@ -1,5 +1,6 @@
 "use client";
 import Featured from "@components/Client/Featured";
+import FeaturedProduct from "@components/Client/FeaturedProduct";
 import Header from "@components/Client/Header";
 import { useEffect, useState } from "react";
 
@@ -17,9 +18,10 @@ export default function Home() {
   }, []);
 
   return (
-    <main className=" w-full flex flex-col h-[100vh] bg-[#F6F6F5] ">
+    <main className=" w-full flex flex-col h-auto bg-[#F6F6F5] ">
       <Header />
       <Featured product={product} />
+      <FeaturedProduct />
     </main>
   );
 }

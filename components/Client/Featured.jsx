@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Featured = ({ product: { _id, title, images, price, description } }) => {
   return (
-    <section className="m-10 h-[60vh] p-8 rounded-lg bg-white grid grid-cols-2 800px:grid-cols-1  ff gap-10 ">
+    <section className="m-10 h-[60vh] p-8 rounded-lg bg-white grid md:grid-cols-2 grid-cols-1  ff gap-10 ">
       <div className="grid items-center justify-center flex-col">
         <h1 className="text-3xl text-gray-700 font-bold">{title}</h1>
         <p className="line-clamp-5">{description}</p>
