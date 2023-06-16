@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   AiFillHeart,
   AiFillStar,
@@ -8,7 +8,11 @@ import {
   AiOutlineStar,
 } from "react-icons/ai";
 import { useEffect } from "react";
+import { CartContext } from "@components/context/CartContext";
+
 const ProductCard = ({ product }) => {
+  const { addProduct } = useContext(CartContext);
+
   return (
     <div className="w-full h-[330px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
       <div className="flex justify-end"></div>
@@ -47,7 +51,10 @@ const ProductCard = ({ product }) => {
       <div className="py-2 flex items-center justify-between">
         <div className="flex">
           <h5 className="font-bold text-[20px] text-[#333] ff">
-            {product.price} $
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+            }).format(product.price)}
           </h5>
         </div>
         {/* <span className="font-[400] text-[17px] text-[#68d284]">99 sold</span> */}
@@ -84,7 +91,7 @@ const ProductCard = ({ product }) => {
         <AiOutlineShoppingCart
           size={25}
           className="cursor-pointer  absolute right-2 top-24"
-          // onClick={() => addToCartHandler(product._id)}
+          onClick={() => addProduct(product)}
           color="#444"
           title="Add to cart"
         />

@@ -1,7 +1,17 @@
 "use client";
+import { CartContext } from "@components/context/CartContext";
 import Link from "next/link";
+import { useContext } from "react";
 
-const Featured = ({ product: { _id, title, images, price, description } }) => {
+const Featured = ({
+  product,
+  product: { _id, title, images, price, description },
+}) => {
+  const { addProduct } = useContext(CartContext);
+  const addtoCart = () => {
+    addProduct(product);
+  };
+
   return (
     <section className="m-10 h-[60vh] p-8 rounded-lg bg-white grid md:grid-cols-2 grid-cols-1  ff gap-10 ">
       <div className="grid items-center justify-center flex-col">
@@ -14,7 +24,10 @@ const Featured = ({ product: { _id, title, images, price, description } }) => {
           >
             Read More
           </Link>
-          <button className="bg-[#222] hover:bg-[#222222dd] text-white flex py-2 px-4 rounded mt-4">
+          <button
+            className="bg-[#222] hover:bg-[#222222dd] text-white flex py-2 px-4 rounded mt-4"
+            onClick={addtoCart}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
