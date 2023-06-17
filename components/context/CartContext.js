@@ -52,14 +52,9 @@ export const CartContextProvider = ({ children }) => {
     setCartProducts([]);
   };
 
-  const totalPrice = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(
-    cartProducts.reduce((previousValue, CartItem) => {
-      return previousValue + CartItem.quantity * +CartItem.price;
-    }, 0)
-  );
+  const totalPrice = cartProducts.reduce((previousValue, CartItem) => {
+    return previousValue + CartItem.quantity * +CartItem.price;
+  }, 0);
 
   return (
     <CartContext.Provider

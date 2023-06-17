@@ -12,9 +12,12 @@ import "@styles/styles.css";
 // import { toast } from "react-toastify";
 
 const Checkout = () => {
-  const { totalPrice } = useContext(CartContext);
+  const { totalPrice, cartProducts } = useContext(CartContext);
   //   const { user } = useSelector((state) => state.user);
   //   const { cart } = useSelector((state) => state.cart);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [userInfo, setUserInfo] = useState(false);
@@ -32,14 +35,23 @@ const Checkout = () => {
 
   const paymentSubmit = () => {
     if (
+      username === "" ||
+      email === "" ||
+      phoneNumber === "" ||
       address1 === "" ||
       address2 === "" ||
       zipCode === null ||
       country === "" ||
       city === ""
     ) {
-      //   toast.error("Please choose your delivery address!");
+      alert("Please fill all the fields!");
     } else {
+      const userInfo = {
+        username,
+        email,
+        phoneNumber,
+      };
+
       const shippingAddress = {
         address1,
         address2,
@@ -49,13 +61,13 @@ const Checkout = () => {
       };
 
       const orderData = {
-        cart,
-        // totalPrice,
-        // subTotalPrice,
-        // shipping,
+        cartProducts,
+        finalPrice,
+        subTotalPrice,
+        shipping,
         // discountPrice,
         shippingAddress,
-        user,
+        userInfo,
       };
 
       // update local storage with the updated orders array
@@ -64,13 +76,18 @@ const Checkout = () => {
     }
   };
 
+  const subTotalPrice = totalPrice;
+
+  const shipping = subTotalPrice * 0.1;
+
+  const finalPrice = subTotalPrice + shipping;
+
   //   const subTotalPrice = cart.reduce(
   //     (acc, item) => acc + item.quantity * item.discountPrice,
   //     0
   //   );
 
   //   // this is shipping cost variable
-  //   const shipping = subTotalPrice * 0.1;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,6 +141,12 @@ const Checkout = () => {
         <div className="w-full 800px:w-[65%]">
           <ShippingInfo
             // user={user}
+            username={username}
+            setUsername={setUsername}
+            email={email}
+            setEmail={setEmail}
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
             country={country}
             setCountry={setCountry}
             city={city}
@@ -141,9 +164,9 @@ const Checkout = () => {
         <div className="w-[35%] 800px:w-[35%] 800px:mt-0 ">
           <CartData
             handleSubmit={handleSubmit}
-            totalPrice={totalPrice}
-            // shipping={shipping}
-            // subTotalPrice={subTotalPrice}
+            finalPrice={finalPrice}
+            shipping={shipping}
+            subTotalPrice={subTotalPrice}
             // couponCode={couponCode}
             // setCouponCode={setCouponCode}
             // discountPercentenge={discountPercentenge}
@@ -161,7 +184,12 @@ const Checkout = () => {
 };
 
 const ShippingInfo = ({
-  user,
+  username,
+  setUsername,
+  email,
+  setEmail,
+  phoneNumber,
+  setPhoneNumber,
   country,
   setCountry,
   city,
@@ -185,7 +213,8 @@ const ShippingInfo = ({
             <label className="block pb-2">Full Name</label>
             <input
               type="text"
-              value={user && user.name}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className={` !w-[95%]`}
             />
@@ -194,7 +223,8 @@ const ShippingInfo = ({
             <label className="block pb-2">Email Address</label>
             <input
               type="email"
-              value={user && user.email}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className=""
             />
@@ -205,10 +235,11 @@ const ShippingInfo = ({
           <div className="w-[50%]">
             <label className="block pb-2">Phone Number</label>
             <input
-              type="number"
-              required
-              value={user && user.phoneNumber}
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               className={`!w-[95%]`}
+              required
             />
           </div>
           <div className="w-[50%]">
@@ -287,13 +318,13 @@ const ShippingInfo = ({
 
         <div></div>
       </form>
-      <h5
+      {/* <h5
         className="text-[18px] cursor-pointer inline-block"
         onClick={() => setUserInfo(!userInfo)}
       >
         Choose From saved address
-      </h5>
-      {userInfo && (
+      </h5> */}
+      {/* {userInfo && (
         <div>
           {user &&
             user.addresses.map((item, index) => (
@@ -314,16 +345,16 @@ const ShippingInfo = ({
               </div>
             ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
 
 const CartData = ({
   handleSubmit,
-  totalPrice,
-  //   shipping,
-  //   subTotalPrice,
+  finalPrice,
+  shipping,
+  subTotalPrice,
   //   couponCode,
   //   setCouponCode,
   //   discountPercentenge,
@@ -332,12 +363,23 @@ const CartData = ({
     <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
       <div className="flex justify-between">
         <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-        <h5 className="text-[18px] font-[600]">$ 0</h5>
+        <h5 className="text-[18px] font-[600]">
+          {" "}
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(subTotalPrice)}
+        </h5>
       </div>
       <br />
       <div className="flex justify-between">
         <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-        <h5 className="text-[18px] font-[600]">$ 0</h5>
+        <h5 className="text-[18px] font-[600]">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(shipping)}
+        </h5>
       </div>
       <br />
       <div className="flex justify-between border-b pb-3">
@@ -349,7 +391,12 @@ const CartData = ({
       </div>
       <div className="flex justify-between items-center pt-3">
         <h3 className="text-[20px] font-[600] text-[#000000e3] ">Total:</h3>
-        <h5 className="text-[18px] font-[600] text-end ">{totalPrice}</h5>
+        <h5 className="text-[18px] font-[600] text-end ">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(finalPrice)}
+        </h5>
       </div>
       {/* <form onSubmit={handleSubmit}>
         <input

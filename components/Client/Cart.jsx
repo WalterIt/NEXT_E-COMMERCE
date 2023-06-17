@@ -49,7 +49,10 @@ const Cart = ({ onCartToggle, ifCartState }) => {
               <div className="flex items-center justify-between">
                 <h1 className="text-base font-semibold uppercase">SubTotal</h1>
                 <h1 className="text-lg rounded bg-theme-cart text-slate-100 px-1 py-0.5">
-                  {totalPrice}
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(totalPrice)}
                 </h1>
               </div>
               <div className="grid items-center gap-2">
